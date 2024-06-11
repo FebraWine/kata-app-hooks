@@ -39,8 +39,8 @@ function TaskListItem(props) {
           <span className="description">{editingValue || label}</span>
           <span className="created">{formatDistanceToNow(timeData, { includeSeconds: true })}</span>
         </label>
-        <button type="button" id={id} className="icon  icon-edit" onClick={clickEdit} />
-        <button type="button" id={id} className="icon  icon-destroy" onClick={onDeleted} />
+        <button type="button" className="icon  icon-edit" onClick={clickEdit} />
+        <button type="button" className="icon  icon-destroy" onClick={onDeleted} />
       </div>
       <input
         id={id}
@@ -52,6 +52,11 @@ function TaskListItem(props) {
       />
     </li>
   )
+}
+
+TaskListItem.defaultProps = {
+  condition: false,
+  label: 'Ошибка при создании задачи',
 }
 
 export default TaskListItem
