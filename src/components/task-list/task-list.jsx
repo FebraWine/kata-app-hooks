@@ -2,7 +2,7 @@ import TaskComplited from '../task/task'
 
 import '../../ComponentsCss/task-list.css'
 
-function TaskList({ todo, onDeleted, onToggleLeft, onEditItem, onTodoFilter }) {
+function TaskList({ todo, onDeleted, onToggleLeft, onEditItem, onTodoFilter, onTimerReset, onTimerPause }) {
   const elements = todo.map((item) => {
     const { ...itemProps } = item
     return (
@@ -12,7 +12,11 @@ function TaskList({ todo, onDeleted, onToggleLeft, onEditItem, onTodoFilter }) {
           todo={itemProps}
           onEditItem={() => onEditItem(item.id)}
           onDeleted={() => onDeleted(item.id)}
-          onToggleLeft={() => onToggleLeft(item.id)}
+          onToggleLeft={() => {
+            onToggleLeft(item.id)
+          }}
+          onTimerReset={() => onTimerReset(item.id)}
+          onTimerPause={() => onTimerPause(item.id)}
         />
       </ul>
     )

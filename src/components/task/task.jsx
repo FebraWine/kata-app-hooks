@@ -5,11 +5,12 @@ import { formatDistanceToNow } from 'date-fns'
 import '../../ComponentsCss/task.css'
 
 function TaskListItem(props) {
-  const { todo, onDeleted, onToggleLeft } = props
-  const { condition, edit, label, timeData, id } = todo
+  const { todo, onDeleted, onToggleLeft, onTimerReset, onTimerPause } = props
+  const { condition, edit, label, timeData, id, sec, min } = todo
   const [editing, setIsEditing] = useState(false)
   const [isChecked, setIsChecked] = useState(condition, edit)
   const [editingValue, setEditingValue] = useState('')
+  const [timeTidi, settimeTidi] = useState('less than 20 seconds')
 
   const clickEdit = () => {
     setIsEditing(true)
@@ -25,19 +26,36 @@ function TaskListItem(props) {
     setEditingValue(e.target.value)
   }
 
+  const getTimeTodo = () => {
+    let getTimeTodoTask = formatDistanceToNow(timeData, { includeSeconds: true })
+    settimeTidi(getTimeTodoTask)
+    getTimeTodoTask = null
+  }
+
+  setTimeout(() => {
+    getTimeTodo()
+  }, 30000)
+
   return (
     <li className={condition ? 'completed' : editing ? 'editing' : 'active'}>
       <div className="view">
         <input
           onClick={onToggleLeft}
           checked={isChecked}
-          onChange={() => setIsChecked(!isChecked)}
+          onChange={() => {
+            setIsChecked(!isChecked)
+          }}
           className="toggle"
           type="checkbox"
         />
         <label htmlFor={id}>
-          <span className="description">{editingValue || label}</span>
-          <span className="created">{formatDistanceToNow(timeData, { includeSeconds: true })}</span>
+          <span className="title">{editingValue || label}</span>
+          <span className="description">
+            <button type="button" className="icon icon-play" onClick={onTimerReset} />
+            <button type="button" className="icon icon-pause" onClick={onTimerPause} />
+            {`${min.toString().padStart(2, '0')} : ${sec.toString().padStart(2, '0')}`}
+          </span>
+          <span className="description">{timeTidi}</span>
         </label>
         <button type="button" className="icon  icon-edit" onClick={clickEdit} />
         <button type="button" className="icon  icon-destroy" onClick={onDeleted} />
@@ -54,9 +72,9 @@ function TaskListItem(props) {
   )
 }
 
-TaskListItem.defaultProps = {
-  condition: false,
-  label: 'Ошибка при создании задачи',
-}
+// TaskListItem.defaultProps = {
+//   condition: false,
+//   label: 'Ошибка при создании задачи',
+// }
 
 export default TaskListItem
