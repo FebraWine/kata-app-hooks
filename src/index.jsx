@@ -113,21 +113,23 @@ export default class App extends React.PureComponent {
       const { TodoData } = this.state
       const idx = TodoData.findIndex((item) => item.id === id)
       const element = TodoData[idx]
-      if (element.sec || element.min) {
-        if (!pause) {
-          const newTimer = setInterval(() => {
-            this.tick(id)
-          }, 1000)
+      if (!element.timer) {
+        if (element.sec || element.min) {
+          if (!pause) {
+            const newTimer = setInterval(() => {
+              this.tick(id)
+            }, 1000)
 
-          const newItem = {
-            ...element,
-            timer: newTimer,
-            runTimer: true,
+            const newItem = {
+              ...element,
+              timer: newTimer,
+              runTimer: true,
+            }
+            const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
+            this.setState(() => {
+              return { TodoData: newArray }
+            })
           }
-          const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-          this.setState(() => {
-            return { TodoData: newArray }
-          })
         }
       }
 
