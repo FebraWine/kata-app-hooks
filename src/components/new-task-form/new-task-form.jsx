@@ -19,7 +19,6 @@ export default class SearchTodo extends React.PureComponent {
     }
 
     this.onSubmit = (e) => {
-      console.log('жмяк')
       e.preventDefault()
       this.props.addItem(this.state.label, this.state.sec, this.state.min)
       this.setState({
@@ -33,7 +32,6 @@ export default class SearchTodo extends React.PureComponent {
       const secondsInput = parseInt(e.target.value, 10)
       if (secondsInput >= 60) {
         this.setState({
-          // eslint-disable-next-line react/no-access-state-in-setstate
           min: parseInt(this.state.min, 10) + Math.floor(secondsInput / 60),
           sec: e.target.value % 60,
         })
@@ -50,7 +48,16 @@ export default class SearchTodo extends React.PureComponent {
       })
     }
 
-    this.onEnterPress = (e) => {
+    this.onEnterPressNumber = (e) => {
+      if (e.target.value < 0) {
+        e.target.value = ''
+      }
+      e.target.value = e.target.value.replace(/[^\d.]/g, '')
+      if (e.key === 'Enter') {
+        this.onSubmit(e)
+      }
+    }
+    this.onEnterPressString = (e) => {
       if (e.key === 'Enter') {
         this.onSubmit(e)
       }
@@ -64,7 +71,7 @@ export default class SearchTodo extends React.PureComponent {
         <input
           type="text"
           onChange={this.onLabelChange}
-          onKeyDown={this.onEnterPress}
+          onKeyDown={this.onEnterPressString}
           value={label}
           className="new-todo"
           placeholder="What needs to be done!?"
@@ -75,7 +82,7 @@ export default class SearchTodo extends React.PureComponent {
           placeholder="Min"
           value={min}
           onChange={this.onMinuteChange}
-          onKeyDown={this.onEnterPress}
+          onKeyUp={this.onEnterPressNumber}
         />
         <input
           type="number"
@@ -83,7 +90,7 @@ export default class SearchTodo extends React.PureComponent {
           placeholder="Sec"
           value={sec}
           onChange={this.onSecondChange}
-          onKeyDown={this.onEnterPress}
+          onKeyUp={this.onEnterPressNumber}
         />
       </form>
     )
