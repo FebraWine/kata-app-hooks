@@ -36,7 +36,6 @@ export default class SearchTodo extends React.PureComponent {
         e.target.value = ''
       }
       const secondsInput = parseInt(e.target.value, 10)
-      console.log(secondsInput)
       if (e.target.value === '') {
         e.target.value = ''
         this.setState({
