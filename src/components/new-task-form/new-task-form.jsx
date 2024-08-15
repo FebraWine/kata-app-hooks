@@ -29,25 +29,38 @@ export default class SearchTodo extends React.PureComponent {
     }
 
     this.onSecondChange = (e) => {
-      if (e.target.value === '') {
+      if (e.target.value === '00') {
         e.target.value = 0
       }
+      if (e.target.value.split('')[0] === '.' || e.target.value.split('')[0] === ',') {
+        e.target.value = ''
+      }
       const secondsInput = parseInt(e.target.value, 10)
-
-      if (!Number.isNaN(secondsInput) && secondsInput >= 60) {
+      console.log(secondsInput)
+      if (e.target.value === '') {
+        e.target.value = ''
         this.setState({
-          min: parseInt(this.state.min, 10) + Math.floor(secondsInput / 60),
-          sec: e.target.value % 60,
+          sec: e.target.value,
+        })
+      } else if (Number.isNaN(secondsInput)) {
+        e.target.value = ''
+      } else if (secondsInput >= 60) {
+        this.setState({
+          sec: secondsInput % 60,
+          min: this.state.min + Math.floor(secondsInput / 60),
         })
       } else {
         this.setState({
-          sec: secondsInput,
+          sec: e.target.value,
         })
       }
     }
 
     this.onMinuteChange = (e) => {
-      if (e.target.value === '') {
+      if (e.target.value.split('')[0] === '.' || e.target.value.split('')[0] === ',') {
+        e.target.value = ''
+      }
+      if (e.target.value === '00') {
         e.target.value = 0
       }
       this.setState({
@@ -56,10 +69,7 @@ export default class SearchTodo extends React.PureComponent {
     }
 
     this.onEnterPressNumber = (e) => {
-      if (e.target.value < 0) {
-        e.target.value = ''
-      }
-      e.target.value = e.target.value.replace(/[^\d.]/g, '')
+      e.target.value = e.target.value.replace(/[^[0-9]]/g, '')
       if (e.key === 'Enter') {
         this.onSubmit(e)
       }
