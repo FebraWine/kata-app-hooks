@@ -8,8 +8,8 @@ export default class SearchTodo extends React.PureComponent {
 
     this.state = {
       label: '',
-      sec: 0,
-      min: 0,
+      sec: '',
+      min: '',
     }
 
     this.onLabelChange = (e) => {
@@ -23,14 +23,18 @@ export default class SearchTodo extends React.PureComponent {
       this.props.addItem(this.state.label, this.state.sec, this.state.min)
       this.setState({
         label: '',
-        sec: 0,
-        min: 0,
+        sec: '',
+        min: '',
       })
     }
 
     this.onSecondChange = (e) => {
+      if (e.target.value === '') {
+        e.target.value = 0
+      }
       const secondsInput = parseInt(e.target.value, 10)
-      if (secondsInput >= 60) {
+
+      if (!Number.isNaN(secondsInput) && secondsInput >= 60) {
         this.setState({
           min: parseInt(this.state.min, 10) + Math.floor(secondsInput / 60),
           sec: e.target.value % 60,
@@ -43,6 +47,9 @@ export default class SearchTodo extends React.PureComponent {
     }
 
     this.onMinuteChange = (e) => {
+      if (e.target.value === '') {
+        e.target.value = 0
+      }
       this.setState({
         min: e.target.value,
       })
