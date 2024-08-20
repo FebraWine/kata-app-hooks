@@ -126,7 +126,7 @@ export default function NewApp() {
         ...el,
         sec: el.sec - 1,
       }
-      // eslint-disable-next-line no-else-return
+      
     } else if (el.min > 0) {
       return {
         ...el,
