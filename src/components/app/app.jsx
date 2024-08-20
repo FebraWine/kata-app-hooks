@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 
 import HeaderTodo from '../app-header/app-header'
 import SearchTodo from '../new-task-form/new-task-form'
@@ -7,225 +7,175 @@ import TaskFooter from '../footer/footer'
 
 import '../../ComponentsCss/app.css'
 
-export default class App extends React.PureComponent {
-  constructor() {
-    super()
+export default function NewApp() {
+  const [todoData, setTodoData] = useState([])
+  const [tabSel, setTabSel] = useState('All')
+  const [idTodo, setIdTodo] = useState(0)
 
-    this.idTodo = 0
+  const maxId = () => {
+    setIdTodo((i) => i + 1)
+  }
 
-    this.maxId = () => {
-      this.idTodo += 1
-      return this.idTodo
-    }
-
-    this.state = {
-      TodoData: [],
-      todoActive: false,
-      tabSel: 'All',
-    }
-
-    this.addedItem = (text, sec, min) => {
-      if (text.trim()) {
-        const newItem = [
-          {
-            label: text,
-            sec,
-            min,
-            timer: false,
-            runTimer: false,
-            condition: false,
-            edit: false,
-            id: this.maxId(this.idTodo),
-            timeData: new Date(),
-          },
-        ]
-        this.setState(({ TodoData }) => {
-          const newArr = [...TodoData, ...newItem]
-
-          return {
-            TodoData: newArr,
-          }
-        })
-      }
-    }
-
-    this.onEditItem = (id) => {
-      this.setState(({ TodoData }) => {
-        const idx = TodoData.findIndex((item) => item.id === id)
-
-        const oldItem = TodoData[idx]
-        const newItem = { ...oldItem, edit: !oldItem.edit }
-        const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-
-        return {
-          TodoData: newArray,
-        }
-      })
-    }
-
-    this.delitItem = (id) => {
-      this.setState(({ TodoData }) => {
-        const idx = TodoData.findIndex((item) => item.id === id)
-        const after = TodoData.slice(0, idx)
-        const before = TodoData.slice(idx + 1)
-        const newTodoData = [...after, ...before]
-        const oldItem = TodoData[idx]
-        clearInterval(oldItem.timer)
-        return {
-          TodoData: newTodoData,
-        }
-      })
-    }
-
-    this.clearComplited = () => {
-      this.setState((TodoData) => {
-        const newArray = TodoData.TodoData.filter((item) => item.condition !== true)
-
-        return {
-          TodoData: newArray,
-        }
-      })
-    }
-
-    this.onToggleLeft = (id) => {
-      this.setState(({ TodoData }) => {
-        const idx = TodoData.findIndex((item) => item.id === id)
-        const oldItem = TodoData[idx]
-        clearInterval(oldItem.timer)
-        const newItem = { ...oldItem, condition: !oldItem.condition, sec: 0, min: 0, timer: null, runTimer: false }
-        const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-
-        return {
-          TodoData: newArray,
-        }
-      })
-    }
-
-    this.handleClickTodo = (tab) => {
-      this.setState({ tabSel: tab })
-    }
-
-    this.startTimer = (id, pause) => {
-      const { TodoData } = this.state
-      const idx = TodoData.findIndex((item) => item.id === id)
-      const element = TodoData[idx]
-      if (!element.timer) {
-        if (element.sec || element.min) {
-          if (!pause) {
-            const newTimer = setInterval(() => {
-              this.tick(id)
-            }, 1000)
-
-            const newItem = {
-              ...element,
-              timer: newTimer,
-              runTimer: true,
-            }
-            const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-            this.setState(() => {
-              return { TodoData: newArray }
-            })
-          }
-        }
-      }
-
-      if (pause) {
-        clearInterval(element.timer)
-        const newItem = {
-          ...element,
-          timer: null,
+  const addedItem = (text, sec, min) => {
+    if (text.trim()) {
+      maxId()
+      const newItem = [
+        {
+          label: text,
+          sec,
+          min,
+          timer: false,
+          active: false,
           runTimer: false,
-        }
-        const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-        this.setState(() => {
-          return { TodoData: newArray }
-        })
-      }
-    }
+          condition: false,
+          edit: false,
+          id: idTodo,
+          timeData: new Date(),
+        },
+      ]
+      const newArr = [...todoData, ...newItem]
 
-    this.tick = (id) => {
-      const { TodoData } = this.state
-      const idx = TodoData.findIndex((item) => item.id === id)
-      const element = TodoData[idx]
-
-      if (!element.runTimer) {
-        return null
-      }
-      if (Number(element.min) <= 0 && Number(element.sec) <= 0) {
-        clearInterval(element.timer)
-        const newItem = {
-          ...element,
-          timer: null,
-          runTimer: false,
-        }
-        const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-        this.setState(() => {
-          return { TodoData: newArray }
-        })
-      } else if (element.sec > 0) {
-        const newItem = { ...element, sec: `${element.sec - 1}` }
-        this.setState(() => {
-          const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-          return {
-            TodoData: newArray,
-          }
-        })
-      } else if (element.min > 0) {
-        const newItem = { ...element, min: `${element.min - 1}`, sec: '59' }
-
-        this.setState(() => {
-          const newArray = [...TodoData.slice(0, idx), newItem, ...TodoData.slice(idx + 1)]
-          return {
-            TodoData: newArray,
-          }
-        })
-      }
-      return null
-    }
-
-    this.timerReset = (id) => {
-      this.startTimer(id, false)
-    }
-
-    this.onTimerPause = (id) => {
-      this.startTimer(id, true)
+      setTodoData(newArr)
     }
   }
 
-  showTodo = () => {
-    const { TodoData, tabSel } = this.state
-    return TodoData.filter(({ condition }) => {
+  const todoActive = (id) => {
+    const idx = todoData.findIndex((item) => item.id === id)
+
+    const oldItem = todoData[idx]
+    const newItem = { ...oldItem, active: !oldItem.active }
+    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
+    setTodoData(newArray)
+  }
+
+  const onEditItem = (id) => {
+    const idx = todoData.findIndex((item) => item.id === id)
+
+    const oldItem = todoData[idx]
+    const newItem = { ...oldItem, edit: !oldItem.edit }
+    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
+    setTodoData(newArray)
+  }
+
+  const delitItem = (id) => {
+    const idx = todoData.findIndex((item) => item.id === id)
+    const after = todoData.slice(0, idx)
+    const before = todoData.slice(idx + 1)
+    const newTodoData = [...after, ...before]
+    const oldItem = todoData[idx]
+    clearInterval(oldItem.timer)
+    setTodoData(newTodoData)
+  }
+
+  const clearComplited = () => {
+    const newArray = todoData.filter((item) => item.condition !== true)
+    setTodoData(newArray)
+  }
+
+  const onToggleLeft = (id) => {
+    const idx = todoData.findIndex((item) => item.id === id)
+    const oldItem = todoData[idx]
+    clearInterval(oldItem.timer)
+    const newItem = { ...oldItem, condition: !oldItem.condition, sec: 0, min: 0, timer: null, runTimer: false }
+    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
+    setTodoData(newArray)
+  }
+
+  const handleClickTodo = (tab) => {
+    setTabSel(tab)
+  }
+
+  const showTodo = () => {
+    return todoData.filter(({ condition }) => {
       const all = tabSel === 'All'
       const completed = tabSel === 'Completed'
       return all ? true : completed ? condition === true : condition === false
     })
   }
 
-  render() {
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <HeaderTodo />
-          <SearchTodo addItem={this.addedItem} />
-        </header>
-        <section className="main">
-          <TaskList
-            todo={this.showTodo()}
-            onDeleted={this.delitItem}
-            onToggleLeft={this.onToggleLeft}
-            onEditItem={this.onEditItem}
-            onTimerReset={this.timerReset}
-            onTimerPause={this.onTimerPause}
-          />
-          <TaskFooter
-            tabSel={this.state.tabSel}
-            onClearComplited={this.clearComplited}
-            todoActive={this.state.todoActive}
-            todo={this.showTodo()}
-            onhandleClickTodo={this.handleClickTodo}
-          />
-        </section>
-      </section>
-    )
+  const onTimerPause = (idx) => {
+    if (todoData.find((el) => el.id === idx).timer) {
+      setTodoData((arr) =>
+        arr.map((el) => {
+          const clearTimer = el.id === idx ? clearInterval(el.timer) : el.timer
+          return {
+            ...el,
+            timer: clearTimer,
+          }
+        })
+      )
+    }
   }
+
+  const onTimerClear = (el) => {
+    clearInterval(el.timer)
+    const newEl = {
+      ...el,
+      sec: 0,
+      min: 0,
+      runTimer: true,
+    }
+    return {
+      ...newEl,
+    }
+  }
+
+  const tick = (el) => {
+    if (el.sec > 0) {
+      return {
+        ...el,
+        sec: el.sec - 1,
+      }
+      // eslint-disable-next-line no-else-return
+    } else if (el.min > 0) {
+      return {
+        ...el,
+        min: el.min - 1,
+        sec: 59,
+      }
+    }
+    return onTimerClear(el)
+  }
+
+  const startTimer = (id) => {
+    if (!todoData.find((el) => el.id === id).timer) {
+      const newTimer = setInterval(() => {
+        if (!todoData.find((el) => el.id === id).runTimer) {
+          setTodoData((arr) => arr.map((el) => (el.id === id ? tick(el) : el)))
+        }
+      }, 1000)
+
+      setTodoData((arr) => arr.map((el) => (el.id === id ? { ...el, timer: newTimer } : el)))
+    }
+  }
+
+  const timerReset = (id) => {
+    startTimer(id)
+  }
+
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <HeaderTodo />
+        <SearchTodo addItem={addedItem} />
+      </header>
+      <section className="main">
+        <TaskList
+          todo={showTodo()}
+          onDeleted={delitItem}
+          onToggleLeft={onToggleLeft}
+          onEditItem={onEditItem}
+          onTimerReset={timerReset}
+          onTimerPause={onTimerPause}
+        />
+        <TaskFooter
+          tabSel={tabSel}
+          onClearComplited={clearComplited}
+          todoActive={todoActive}
+          todo={showTodo()}
+          onhandleClickTodo={handleClickTodo}
+        />
+      </section>
+    </section>
+  )
 }
