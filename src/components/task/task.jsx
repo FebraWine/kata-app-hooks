@@ -12,28 +12,26 @@ function TaskListItem(props) {
   const [editingValue, setEditingValue] = useState('')
   const [timeTidi, settimeTidi] = useState('less than 20 seconds')
 
-  const clickEdit = () => {
-    setIsEditing(true)
-  }
+  // const clickEdit = () => {
+  //   setIsEditing(true)
+  // }
 
-  const onLabelChange = (e) => {
-    if (e.keyCode === 13) {
-      setIsEditing(false)
-    }
-  }
+  // const onLabelChange = (e) => {
+  //   if (e.keyCode === 13) {
+  //     setIsEditing(false)
+  //   }
+  // }
 
-  const handelChange = (e) => {
-    setEditingValue(e.target.value)
-  }
+  // const handelChange = (e) => {
+  //   setEditingValue(e.target.value)
+  // }
 
-  const getTimeTodo = () => {
-    let getTimeTodoTask = formatDistanceToNow(timeData, { includeSeconds: true })
-    settimeTidi(getTimeTodoTask)
-    getTimeTodoTask = null
+  const getTimeTodo = (time) => {
+    settimeTidi(time)
   }
 
   setTimeout(() => {
-    getTimeTodo()
+    getTimeTodo(formatDistanceToNow(timeData, { includeSeconds: true }))
   }, 30000)
 
   return (
@@ -57,15 +55,15 @@ function TaskListItem(props) {
           </span>
           <span className="description">{timeTidi}</span>
         </label>
-        <button type="button" className="icon  icon-edit" onClick={clickEdit} />
+        <button type="button" className="icon  icon-edit" onClick={() => setIsEditing(true)} />
         <button type="button" className="icon  icon-destroy" onClick={onDeleted} />
       </div>
       <input
         id={id}
         className="edit"
         type="text"
-        onChange={handelChange}
-        onKeyDown={onLabelChange}
+        onChange={(e) => setEditingValue(e.target.value)}
+        onKeyDown={(e) => e.keyCode === 13 && setIsEditing(false)}
         value={editingValue || label}
       />
     </li>

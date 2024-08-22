@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 import HeaderTodo from '../app-header/app-header'
 import SearchTodo from '../new-task-form/new-task-form'
@@ -11,6 +11,7 @@ export default function NewApp() {
   const [todoData, setTodoData] = useState([])
   const [tabSel, setTabSel] = useState('All')
   const [idTodo, setIdTodo] = useState(0)
+  const timerRef = useRef('')
 
   const maxId = () => {
     setIdTodo((i) => i + 1)
@@ -126,7 +127,6 @@ export default function NewApp() {
         ...el,
         sec: el.sec - 1,
       }
-      // eslint-disable-next-line no-else-return
     } else if (el.min > 0) {
       return {
         ...el,
@@ -138,18 +138,19 @@ export default function NewApp() {
   }
 
   const startTimer = (id) => {
-    if (!todoData.find((el) => el.id === id).timer) {
-      const newTimer = setInterval(() => {
-        if (!todoData.find((el) => el.id === id).runTimer) {
-          setTodoData((arr) => arr.map((el) => (el.id === id ? tick(el) : el)))
-        }
+    if (!timerRef.current.find((el) => el.id === id).timer) {
+      const timerItem = setInterval(() => {
+        console.log('жмяк')
+        setTodoData((arr) => arr.map((el) => (el.id === id ? tick(el) : el)))
       }, 1000)
 
-      setTodoData((arr) => arr.map((el) => (el.id === id ? { ...el, timer: newTimer } : el)))
+      setTodoData((arr) => arr.map((el) => (el.id === id ? { ...el, timer: timerItem } : el)))
+      timerRef.current = todoData
     }
   }
 
   const timerReset = (id) => {
+    timerRef.current = todoData
     startTimer(id)
   }
 

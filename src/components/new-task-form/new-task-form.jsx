@@ -7,9 +7,9 @@ export default function SearchTodo(props) {
   const [sec, setSec] = useState('')
   const [label, setLabel] = useState('')
 
-  const onLabelChange = (e) => {
-    setLabel(e.target.value)
-  }
+  // const onLabelChange = (e) => {
+  //   setLabel(e.target.value)
+  // }
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -23,9 +23,11 @@ export default function SearchTodo(props) {
     if (e.target.value === '00') {
       e.target.value = 0
     }
+
     if (e.target.value.split('')[0] === '.' || e.target.value.split('')[0] === ',') {
       e.target.value = ''
     }
+
     const secondsInput = parseInt(e.target.value, 10)
     if (e.target.value === '') {
       e.target.value = ''
@@ -58,6 +60,7 @@ export default function SearchTodo(props) {
       onSubmit(e)
     }
   }
+
   const onEnterPressString = (e) => {
     if (e.key === 'Enter') {
       onSubmit(e)
@@ -68,7 +71,7 @@ export default function SearchTodo(props) {
     <form className="new-todo-form" onSubmit={onSubmit}>
       <input
         type="text"
-        onChange={onLabelChange}
+        onChange={(e) => setLabel(e.target.value)}
         onKeyDown={onEnterPressString}
         value={label}
         className="new-todo"
