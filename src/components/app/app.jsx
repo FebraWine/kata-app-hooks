@@ -140,7 +140,6 @@ export default function NewApp() {
   const startTimer = (id) => {
     if (!timerRef.current.find((el) => el.id === id).timer) {
       const timerItem = setInterval(() => {
-        console.log('жмяк')
         setTodoData((arr) => arr.map((el) => (el.id === id ? tick(el) : el)))
       }, 1000)
 
